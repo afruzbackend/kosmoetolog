@@ -1,0 +1,3 @@
+# Netlify faqat shu papkani chiqaradi: u so'rovlarni PythonAnywhere'dagi saytga uzatadi.
+[build]
+  publish = "netlify"
