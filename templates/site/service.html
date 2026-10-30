@@ -1,0 +1,53 @@
+{% extends "site/base.html" %}
+{% load clinic_tags %}
+{% block title %}{{ service.name }} | {{ site.name }}{% endblock %}
+{% block description %}{{ service.short }}{% endblock %}
+{% block content %}
+<div class="wrap page">
+  <nav class="crumbs" aria-label="breadcrumb">
+    <a href="{% url 'home' %}">{{ t.home }}</a><span>/</span>
+    <a href="{% url 'catalog' %}?category={{ service.category_id }}">{{ service.category.name }}</a><span>/</span>
+    <span class="crumbs__now">{{ service.name }}</span>
+  </nav>
+  <div class="detail">
+    <div class="detail__media">
+      {% if service.discount %}<span class="tag tag--solid detail__tag">-{{ service.discount }} %</span>{% endif %}
+      <img src="{{ service.image_url }}" alt="{{ service.name }}">
+    </div>
+    <div class="detail__info">
+      <h1>{{ service.name }}</h1>
+      <p class="lead">{{ service.short }}</p>
+      <div class="detail__meta">
+        <span>{% icon "clock" 20 %}{{ t.min_60 }}</span>
+        <span>{% icon "sparkle" 20 %}{{ service.category.name }}</span>
+      </div>
+      <div class="detail__price">
+        <b>{{ service.price|money }} {{ t.sum }}</b>
+        {% if service.discount %}<s>{{ service.old_price|money }} {{ t.sum }}</s>{% endif %}
+      </div>
+      <a class="btn btn--primary btn--lg" href="{% url 'booking' %}?service={{ service.id }}">{{ t.book_now }}</a>
+
+      {% if service.description %}
+      <h2>{{ t.about_service }}</h2>
+      <p>{{ service.description|linebreaksbr }}</p>
+      {% endif %}
+
+      <h2>{{ t.performs }}</h2>
+      {% for doctor, free in doctors %}
+      <a class="doc-row" href="{% url 'booking' %}?service={{ service.id }}&doctor={{ doctor.id }}">
+        <img src="{{ doctor.image_url }}" alt="">
+        <span><b>{{ doctor.name }}</b><small>{{ doctor.specialty }}</small></span>
+        <em>{% if free %}{{ t.next_free }}: {{ free.date|dotted }}, {{ free.time }}{% else %}{{ t.no_free }}{% endif %}</em>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if related %}
+  <section class="section">
+    <div class="section__head"><h2>{{ t.also_like }}</h2></div>
+    <div class="grid">{% for s in related %}{% include "site/_service_card.html" %}{% endfor %}</div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

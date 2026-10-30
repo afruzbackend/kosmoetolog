@@ -1,0 +1,21 @@
+{% load clinic_tags %}
+<article class="card">
+  <a class="card__media" href="{% url 'service' s.id %}" aria-label="{{ s.name }}">
+    <span class="card__badges">
+      {% if s.is_popular %}<span class="tag tag--solid">Top</span>{% endif %}
+      {% if s.discount %}<span class="tag tag--soft">-{{ s.discount }} %</span>{% endif %}
+    </span>
+    <img src="{{ s.image_url }}" alt="{{ s.name }}" loading="lazy">
+  </a>
+  <div class="card__body">
+    <a class="card__title" href="{% url 'service' s.id %}">{{ s.name }}</a>
+    <p class="card__meta">{{ s.short }}</p>
+    <div class="card__foot">
+      <div class="card__price">
+        <b>{{ s.price|money }} {{ t.sum }}</b>
+        {% if s.old_price and s.discount %}<s>{{ s.old_price|money }} {{ t.sum }}</s>{% endif %}
+      </div>
+      <a class="plus" href="{% url 'booking' %}?service={{ s.id }}" aria-label="{{ t.book_now }}: {{ s.name }}"><svg class="i"><use href="#i-plus"/></svg></a>
+    </div>
+  </div>
+</article>

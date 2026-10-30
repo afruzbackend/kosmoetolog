@@ -1,0 +1,5 @@
+{% load clinic_tags %}{% if doctor.phone or doctor.telegram or doctor.instagram %}<div class="doc-links">
+  {% if doctor.phone %}<a href="tel:+{{ doctor.phone }}">{% icon "phone" 18 %}{{ doctor.phone|phone }}</a>{% endif %}
+  {% if doctor.telegram %}<a href="https://t.me/{{ doctor.telegram }}" target="_blank" rel="noopener">{% brand "telegram" 18 %}Telegram</a>{% endif %}
+  {% if doctor.instagram %}<a href="https://instagram.com/{{ doctor.instagram }}" target="_blank" rel="noopener">{% brand "instagram" 18 %}Instagram</a>{% endif %}
+</div>{% endif %}

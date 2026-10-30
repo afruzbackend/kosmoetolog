@@ -1,0 +1,41 @@
+{% load clinic_tags %}
+{% for item in layout %}
+  {% if item.type == 'lang' %}
+  <div class="pf pf--wide" data-langs>
+    <div class="pf__head">
+      <span>{{ item.label }}</span>
+      <div class="langtabs">
+        {% for row in item.fields %}<button type="button" class="{% if forloop.first %}is-active{% endif %}" data-lang="{{ row.code }}">{% flag row.flag 18 %}{{ row.code|upper }}</button>{% endfor %}
+      </div>
+    </div>
+    {% for row in item.fields %}
+      <div data-lang-pane="{{ row.code }}" {% if not forloop.first %}hidden{% endif %}>{{ row.field }}{{ row.field.errors }}</div>
+    {% endfor %}
+  </div>
+  {% elif item.type == 'image' %}
+  <div class="pf pf--wide">
+    <span>{{ item.field.label }}</span>
+    <div class="imgf">
+      <img src="{{ item.current|default:item.fallback }}" alt="" data-preview-img>
+      <div class="imgf__side">
+        <label class="btn btn--outline"><svg class="i i--sm"><use href="#i-upload"/></svg>Rasmni almashtirish
+          <input type="file" name="{{ item.field.html_name }}" accept="image/jpeg,image/png,image/webp" hidden data-preview>
+        </label>
+        <small class="muted">JPG, PNG yoki WEBP, 5 MB gacha</small>
+        {% if item.current %}<label class="check"><input type="checkbox" name="{{ item.field.html_name }}-clear"> Yuklangan rasmni o'chirish</label>{% endif %}
+      </div>
+    </div>
+    {{ item.field.errors }}
+  </div>
+  {% elif item.type == 'checks' %}
+  <div class="pf pf--wide">
+    <span>{{ item.field.label }}</span>
+    <div class="checks">{% for choice in item.field %}<label class="chip"><input type="{{ item.input }}" name="{{ item.field.html_name }}" value="{{ choice.data.value }}" {% if choice.data.selected %}checked{% endif %}><span>{{ choice.choice_label }}</span></label>{% endfor %}</div>
+    {{ item.field.errors }}
+  </div>
+  {% elif item.type == 'switch' %}
+  <label class="switch">{{ item.field }}<i></i><span>{{ item.field.label }}</span></label>
+  {% else %}
+  <label class="pf"><span>{{ item.field.label }}</span>{{ item.field }}{% if item.field.help_text %}<small class="muted">{{ item.field.help_text }}</small>{% endif %}{{ item.field.errors }}</label>
+  {% endif %}
+{% endfor %}

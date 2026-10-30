@@ -1,0 +1,45 @@
+{% extends "site/base.html" %}
+{% load clinic_tags %}
+{% block title %}{{ t.lookup_title }} | {{ site.name }}{% endblock %}
+{% block content %}
+<div class="wrap page page--narrow">
+  <nav class="crumbs" aria-label="breadcrumb">
+    <a href="{% url 'home' %}">{{ t.home }}</a><span>/</span><span class="crumbs__now">{{ t.my_booking }}</span>
+  </nav>
+  <h1>{{ t.lookup_title }}</h1>
+  <p class="muted">{{ t.lookup_text }}</p>
+
+  <form class="form panel-card" method="post" novalidate>
+    {% csrf_token %}
+    <label class="field"><span>{{ t.phone }}</span>
+      <input name="phone" data-mask="phone" placeholder="+998 50 000 00 00" inputmode="tel" value="{{ request.POST.phone }}" required></label>
+    <label class="field"><span>{{ t.booking_code }}</span>
+      <input name="code" data-mask="code" inputmode="numeric" placeholder="000000" value="{{ request.POST.code }}" required></label>
+    {% if error %}<p class="form__error" role="alert">{{ t.not_found }}</p>{% endif %}
+    <button class="btn btn--primary btn--block" type="submit">{{ t.check }}</button>
+  </form>
+
+  {% if found %}
+  <div class="panel-card result">
+    {% if cancelled %}<p class="notice">{% icon "check" 20 %}{{ t.cancelled }}</p>{% endif %}
+    <dl>
+      <div><dt>{{ t.service }}</dt><dd>{{ found.service.name }}</dd></div>
+      <div><dt>{{ t.doctor }}</dt><dd>{{ found.doctor.name }}</dd></div>
+      <div><dt>{{ t.date }}</dt><dd>{{ found.date|date:"d.m.Y" }}</dd></div>
+      <div><dt>{{ t.time }}</dt><dd>{{ found.time|time:"H:i" }}</dd></div>
+      <div><dt>{{ t.price }}</dt><dd>{{ found.price|money }} {{ t.sum }}</dd></div>
+      <div><dt>{{ t.status }}</dt><dd><span class="tag tag--soft">{{ status_label }}</span></dd></div>
+    </dl>
+    {% if can_cancel %}
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="phone" value="{{ found.client.phone }}">
+      <input type="hidden" name="code" value="{{ found.code }}">
+      <input type="hidden" name="action" value="cancel">
+      <button class="btn btn--ghost btn--block" type="submit" data-confirm="{{ t.cancel_confirm }}">{{ t.cancel_booking }}</button>
+    </form>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

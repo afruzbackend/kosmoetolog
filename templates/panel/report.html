@@ -1,0 +1,69 @@
+{% extends "panel/base.html" %}
+{% load clinic_tags %}
+{% block title %}Hisobot{% endblock %}
+{% block content %}
+<div class="head">
+  <div>
+    <h1>Hisobot</h1>
+    <p class="muted">{% if single %}{{ start|date:"j F Y, l" }}{% else %}{{ start|date:"d.m.Y" }} — {{ end|date:"d.m.Y" }}{% endif %}</p>
+  </div>
+  <div class="head__actions noprint">
+    <a class="btn btn--outline" href="{% url 'panel:report_excel' %}?from={{ start|date:'Y-m-d' }}&to={{ end|date:'Y-m-d' }}"><svg class="i i--sm"><use href="#i-excel"/></svg>Excel</a>
+    <button class="btn btn--outline" type="button" data-print><svg class="i i--sm"><use href="#i-print"/></svg>Chop etish</button>
+  </div>
+</div>
+<form class="filterbar noprint" method="get">
+  {% if single %}<a class="btn btn--outline btn--icon" href="?from={{ prev|date:'Y-m-d' }}" aria-label="Oldingi kun"><svg class="i i--sm"><use href="#i-left"/></svg></a>{% endif %}
+  <input type="date" name="from" value="{{ start|date:'Y-m-d' }}" required aria-label="Boshlanish">
+  <input type="date" name="to" value="{{ end|date:'Y-m-d' }}" required aria-label="Tugash">
+  {% if single %}<a class="btn btn--outline btn--icon" href="?from={{ next|date:'Y-m-d' }}" aria-label="Keyingi kun"><svg class="i i--sm"><use href="#i-right"/></svg></a>{% endif %}
+  <button class="btn btn--primary" type="submit">Ko'rsatish</button>
+  <a class="pillink" href="?from={{ today|date:'Y-m-d' }}">Bugun</a>
+  <a class="pillink" href="?from={{ week_start|date:'Y-m-d' }}&to={{ today|date:'Y-m-d' }}">7 kun</a>
+  <a class="pillink" href="?from={{ month_start|date:'Y-m-d' }}&to={{ today|date:'Y-m-d' }}">Shu oy</a>
+</form>
+
+<div class="stats">
+  <div class="stat stat--main"><small>Tushum, so'm</small><b>{{ summary.revenue|money }}</b></div>
+  <div class="stat"><small>Navbatlar</small><b>{{ summary.total }}</b></div>
+  <div class="stat"><small>Bajarildi</small><b>{{ summary.done }}</b></div>
+  <div class="stat"><small>O'rtacha chek, so'm</small><b>{{ summary.average|money }}</b></div>
+  <div class="stat"><small>Bekor qilindi</small><b>{{ summary.cancelled }}</b></div>
+  <div class="stat"><small>Kelmadi</small><b>{{ summary.noshow }}</b></div>
+  <div class="stat"><small>Yangi mijozlar</small><b>{{ summary.new_clients }}</b></div>
+</div>
+
+<section class="box">
+  <h2>So'nggi 30 kun tushumi</h2>
+  {% if has_chart %}
+  <div class="bars" role="img" aria-label="So'nggi 30 kunlik kunlik tushum, eng yuqorisi {{ chart_peak|money }} so'm">
+    {% for d in chart %}
+    <a class="bar" href="?from={{ d.date|date:'Y-m-d' }}" data-tip="{{ d.date|date:'d.m' }}: {{ d.value|money }} so'm"><i style="height:{{ d.height }}%"></i></a>
+    {% endfor %}
+  </div>
+  <div class="bars__axis"><span>{{ chart.0.date|date:"d.m" }}</span><span>eng yuqori: {{ chart_peak|money }} so'm</span><span>{{ end|date:"d.m" }}</span></div>
+  {% else %}<p class="t-empty">Bajarilgan navbatlar paydo bo'lganda grafik shu yerda chiqadi.</p>{% endif %}
+</section>
+
+<div class="two">
+  {% if is_main %}<section class="box">
+    <h2>Mutaxassislar bo'yicha</h2>
+    <div class="table-wrap"><table class="table">
+      <thead><tr><th>Mutaxassis</th><th>Navbat</th><th>Bajarildi</th><th>Tushum</th></tr></thead>
+      <tbody>{% for r in by_doctor %}<tr><td>{{ r.doctor__name_uz }}</td><td>{{ r.total }}</td><td>{{ r.done }}</td><td class="nowrap">{{ r.revenue|default:0|money }}</td></tr>{% empty %}<tr><td colspan="4" class="t-empty">Ma'lumot yo'q</td></tr>{% endfor %}</tbody>
+    </table></div>
+  </section>{% endif %}
+  <section class="box">
+    <h2>Xizmatlar bo'yicha</h2>
+    <div class="table-wrap"><table class="table">
+      <thead><tr><th>Xizmat</th><th>Soni</th><th>Tushum</th></tr></thead>
+      <tbody>{% for r in by_service %}<tr><td>{{ r.service__name_uz }}</td><td>{{ r.total }}</td><td class="nowrap">{{ r.revenue|money }}</td></tr>{% empty %}<tr><td colspan="3" class="t-empty">Ma'lumot yo'q</td></tr>{% endfor %}</tbody>
+    </table></div>
+  </section>
+</div>
+
+<section class="box">
+  <h2>Barcha navbatlar</h2>
+  {% include "panel/_table.html" with rows=rows with_date=True %}
+</section>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "panel/base.html" %}
+{% load clinic_tags %}
+{% block title %}{{ client.name }}{% endblock %}
+{% block content %}
+<div class="head">
+  <div><h1>{{ client.name }}</h1><p class="muted"><a href="tel:+{{ client.phone }}">{{ client.phone|phone }}</a></p></div>
+  <a class="btn btn--primary" href="{% url 'panel:appointment_new' %}?phone={{ client.phone }}"><svg class="i i--sm"><use href="#i-plus"/></svg>Navbat</a>
+</div>
+<div class="stats stats--3">
+  <div class="stat"><small>Tashriflar</small><b>{{ visits }}</b></div>
+  <div class="stat"><small>Jami, so'm</small><b>{{ spent|money }}</b></div>
+  <div class="stat"><small>Mijoz bo'lgan sana</small><b>{{ client.created_at|date:"d.m.Y" }}</b></div>
+</div>
+<form class="box formgrid" method="post" novalidate>
+  {% csrf_token %}
+  {% for field in form %}<label class="pf{% if field.name == 'note' %} pf--wide{% endif %}"><span>{{ field.label }}</span>{{ field }}{{ field.errors }}</label>{% endfor %}
+  <div class="formbar"><button class="btn btn--primary" type="submit">Saqlash</button></div>
+</form>
+<section class="box">
+  <h2>Tashriflar tarixi</h2>
+  {% include "panel/_table.html" with rows=history with_date=True %}
+</section>
+{% endblock %}

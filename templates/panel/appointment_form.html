@@ -1,0 +1,20 @@
+{% extends "panel/base.html" %}
+{% load clinic_tags %}
+{% block title %}Navbat{% endblock %}
+{% block content %}
+<div class="head"><h1>{% if instance %}Navbat #{{ instance.code }}{% else %}Yangi navbat{% endif %}</h1></div>
+<form class="box formgrid" method="post" id="appointmentForm" novalidate>
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.GET.next }}">
+  {{ form.non_field_errors }}
+  {% for field in form %}
+  {% if field.is_hidden %}{{ field }}{% else %}<label class="pf"><span>{{ field.label }}</span>{{ field }}{{ field.errors }}</label>{% endif %}
+  {% if field.name == 'time' %}<div class="pf pf--wide"><div class="timechips" id="timeChips"></div></div>{% endif %}
+  {% endfor %}
+  <div class="formbar">
+    <button class="btn btn--primary" type="submit">Saqlash</button>
+    <a class="btn btn--ghost" href="{{ request.GET.next|default:'/panel/kalendar/' }}">Bekor qilish</a>
+  </div>
+</form>
+{{ prices|json_script:"prices" }}
+{% endblock %}

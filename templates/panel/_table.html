@@ -1,0 +1,19 @@
+{% load clinic_tags %}<div class="table-wrap"><table class="table">
+  <thead><tr>{% if with_date %}<th>Sana</th>{% endif %}<th>Soat</th><th>Mijoz</th><th>Xizmat</th>{% if is_main and doctor_count > 1 %}<th>Mutaxassis</th>{% endif %}<th>Narx</th><th>Holat</th><th></th></tr></thead>
+  <tbody>
+  {% for a in rows %}
+    <tr>
+      {% if with_date %}<td class="nowrap">{{ a.date|date:"d.m.Y" }}</td>{% endif %}
+      <td class="t-time">{{ a.time|time:"H:i" }}</td>
+      <td><a class="t-link" href="{% url 'panel:client' a.client_id %}">{{ a.client.name }}</a><small><a href="tel:+{{ a.client.phone }}">{{ a.client.phone|phone }}</a></small></td>
+      <td>{{ a.service.name_uz }}</td>
+      {% if is_main and doctor_count > 1 %}<td class="nowrap">{{ a.doctor.name_uz }}</td>{% endif %}
+      <td class="nowrap">{{ a.price|money }}</td>
+      <td><span class="st st--{{ a.status }}">{{ a.get_status_display }}</span></td>
+      <td class="t-actions">{% include "panel/_status.html" %}<a class="mini" href="{% url 'panel:appointment' a.id %}?next={{ request.get_full_path|urlencode }}" aria-label="Tahrirlash" title="Tahrirlash"><svg class="i i--sm"><use href="#i-edit"/></svg></a></td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="8" class="t-empty">Navbatlar yo'q</td></tr>
+  {% endfor %}
+  </tbody>
+</table></div>

@@ -1,0 +1,35 @@
+{% extends "panel/base.html" %}
+{% block title %}Sozlamalar{% endblock %}
+{% block head %}<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">{% endblock %}
+{% block content %}
+<div class="head"><h1>Sozlamalar</h1></div>
+<form class="box formgrid" method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {% include "panel/_form_layout.html" %}
+  <div class="pf pf--wide">
+    <span>Lokatsiya</span>
+    <div class="mapline">
+      <input id="mapLink" type="text" placeholder="Google yoki Yandex xarita havolasini shu yerga qo'ying" aria-label="Xarita havolasi">
+      <button class="btn btn--outline" type="button" id="myLocation">Mening joylashuvim</button>
+    </div>
+    <small class="muted" id="mapHint">Xaritani bosib ham aniq joyni belgilash mumkin.</small>
+    <div id="mapPicker" class="mappick"></div>
+    <div class="mapline">
+      <a class="btn btn--outline" id="openGoogle" target="_blank" rel="noopener">Google Maps'da ko'rish</a>
+      <a class="btn btn--outline" id="openYandex" target="_blank" rel="noopener">Yandex Maps'da ko'rish</a>
+    </div>
+  </div>
+  <div class="formbar"><button class="btn btn--primary" type="submit">Saqlash</button></div>
+</form>
+
+<form class="box formgrid" method="post" novalidate>
+  {% csrf_token %}
+  <input type="hidden" name="form" value="password">
+  <h2 class="pf--wide">Parolni almashtirish</h2>
+  {% for field in password_form %}<label class="pf"><span>{{ field.label }}</span>{{ field }}{{ field.errors }}</label>{% endfor %}
+  <div class="formbar"><button class="btn btn--outline" type="submit">Parolni yangilash</button></div>
+</form>
+{% endblock %}
+{% block scripts %}<script>window.L_DISABLE_3D = true;</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>{% endblock %}

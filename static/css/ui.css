@@ -1,0 +1,65 @@
+/* Sayt va panel uchun umumiy elementlar: brauzer standartlari o'rniga dizayn */
+::selection { background: var(--pink); color: #fff; }
+html { scrollbar-width: thin; scrollbar-color: #F3B8D6 transparent; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #F3B8D6; border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+input[type=search]::-webkit-search-cancel-button { display: none; }
+input:-webkit-autofill, input:-webkit-autofill:focus { -webkit-text-fill-color: var(--ink); box-shadow: 0 0 0 40px #FFF4F9 inset; caret-color: var(--ink); }
+::placeholder { color: var(--faint); opacity: 1; }
+.i { display: inline-block; flex: none; width: 24px; height: 24px; }
+.i--sm { width: 18px; height: 18px; }
+.ic { color: var(--pink); }
+.btn--primary .ic, .float-cta .ic, .is-active > .ic { color: inherit; }
+
+/* Tanlash ro'yxati */
+.sel, .dp { position: relative; min-width: 0; }
+.sel__btn, .dp__btn { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 46px; padding: 0 14px; border: 1px solid transparent; border-radius: 13px; background: #F5F4F7; cursor: pointer; text-align: left; }
+.sel__btn .i { margin-left: auto; color: var(--muted); transition: transform .15s; }
+.sel__text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.is-empty { color: var(--faint); }
+.sel.is-open .sel__btn, .dp.is-open .dp__btn { background: #fff; border-color: var(--pink); }
+.sel.is-open .sel__btn .i { transform: rotate(180deg); }
+.sel__list { display: none; position: absolute; z-index: 30; top: calc(100% + 6px); left: 0; min-width: 100%; width: max-content; max-width: min(340px, 86vw); max-height: 280px; overflow: auto; margin: 0; padding: 6px; list-style: none; background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 16px 40px rgba(22, 20, 26, .12); }
+.sel.is-open .sel__list { display: block; }
+.sel.is-right .sel__list { left: auto; right: 0; }
+.sel__list li { padding: 10px 12px; border-radius: 10px; cursor: pointer; outline: 0; }
+.sel__list li:hover, .sel__list li:focus { background: var(--pink-faint); }
+.sel__list li.is-active { background: var(--pink-soft); color: var(--pink-dark); font-weight: 600; }
+.sel--plain .sel__btn { width: auto; min-height: 0; padding: 0; gap: 6px; background: none; border: 0; font-weight: 600; }
+.sel--plain .sel__btn .i { margin-left: 0; color: inherit; }
+
+/* Sana tanlash */
+.dp__btn .i { color: var(--pink); }
+.dp__pop { display: none; position: absolute; z-index: 30; top: calc(100% + 6px); left: 0; width: 290px; padding: 12px; background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 16px 40px rgba(22, 20, 26, .12); }
+.dp.is-open .dp__pop { display: block; }
+.dp.is-right .dp__pop { left: auto; right: 0; }
+.dp__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.dp__head button { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 50%; background: #fff; cursor: pointer; }
+.dp__head button:hover { border-color: var(--pink); color: var(--pink); }
+.dp__head b { font-weight: 600; font-size: 15px; }
+.dp__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.dp__grid--head span { text-align: center; font-size: 12px; color: var(--muted); padding: 4px 0; }
+.dp__grid button { aspect-ratio: 1; border: 0; border-radius: 10px; background: none; cursor: pointer; font-size: 14px; font-weight: 500; }
+.dp__grid button:hover { background: var(--pink-soft); }
+.dp__grid button.is-today { color: var(--pink); font-weight: 700; }
+.dp__grid button.is-active { background: var(--pink); color: #fff; }
+.dp__foot { display: flex; justify-content: space-between; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); }
+.dp__foot button { border: 0; background: none; color: var(--pink-dark); font-weight: 600; font-size: 14px; cursor: pointer; padding: 4px; }
+
+/* Tasdiqlash oynasi */
+.modal { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 16px; background: rgba(22, 20, 26, .45); }
+.modal__card { width: min(380px, 100%); padding: 24px; background: #fff; border-radius: 24px; }
+.modal__card p { margin: 0 0 20px; font-size: 17px; font-weight: 600; line-height: 1.4; }
+.modal__row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* Radio va belgilash */
+.radio input, .check input { appearance: none; -webkit-appearance: none; width: 20px; height: 20px; margin: 0; flex: none; border: 1.5px solid #D9D5DD; background: #fff; cursor: pointer; display: inline-grid; place-items: center; }
+.radio input { border-radius: 50%; }
+.check input { border-radius: 6px; }
+.radio input:checked { border-color: var(--pink); }
+.radio input:checked::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--pink); }
+.check input:checked { background: var(--pink); border-color: var(--pink); }
+.check input:checked::after { content: ""; width: 5px; height: 9px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg) translate(-1px, -1px); }

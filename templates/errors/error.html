@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#E0117F">
+  <title>{{ code }} | {{ title }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap&subset=cyrillic,latin-ext" rel="stylesheet">
+  <style>
+    /* Barcha stil shu yerda: statik fayllar ishlamay qolsa ham sahifa buzilmaydi */
+    :root { --pink: #E0117F; --pink-dark: #B8127A; --pink-soft: #FFE6F2; --pink-faint: #FFF4F9; --ink: #16141A; --muted: #7B7682; --line: #ECE9EE; }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; min-height: 100%; display: flex; flex-direction: column; overflow-x: hidden; background: #fff; color: var(--ink); font-family: "Montserrat", "Segoe UI", system-ui, sans-serif; font-weight: 500; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    ::selection { background: var(--pink); color: #fff; }
+    :focus-visible { outline: 2px solid var(--pink); outline-offset: 3px; }
+
+    .top { display: flex; justify-content: center; padding: 24px 16px; border-bottom: 1px solid var(--line); }
+    .logo { display: inline-flex; align-items: center; gap: 10px; color: var(--pink); font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: .01em; line-height: 1.05; }
+    .logo svg { width: 38px; height: 38px; flex: none; }
+
+    .main { position: relative; flex: 1; display: grid; place-items: center; padding: 48px 16px; overflow: hidden; }
+    .main::before, .main::after { content: ""; position: absolute; border-radius: 50%; pointer-events: none; }
+    .main::before { width: 520px; height: 520px; top: -220px; right: -160px; background: var(--pink-faint); }
+    .main::after { width: 360px; height: 360px; bottom: -170px; left: -120px; background: var(--pink-soft); opacity: .6; }
+
+    .card { position: relative; z-index: 1; width: min(620px, 100%); text-align: center; }
+    .code { margin: 0; font-size: clamp(96px, 22vw, 176px); font-weight: 800; line-height: 1; letter-spacing: -.03em; background: linear-gradient(135deg, #FF7DB6, var(--pink) 55%, var(--pink-dark)); -webkit-background-clip: text; background-clip: text; color: transparent; animation: rise .6s ease-out both; }
+    h1 { margin: 12px 0 10px; font-size: clamp(24px, 4.4vw, 34px); font-weight: 700; line-height: 1.2; }
+    .text { margin: 0 auto; max-width: 480px; color: var(--muted); font-size: 17px; }
+
+    .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 30px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 0 28px; border: 1px solid transparent; border-radius: 16px; background: none; color: inherit; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+    .btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .btn--primary { background: var(--pink); color: #fff; }
+    .btn--primary:hover { background: var(--pink-dark); }
+    .btn--outline { border-color: var(--line); background: #fff; }
+    .btn--outline:hover { border-color: var(--pink); color: var(--pink); }
+
+    .help { margin: 30px 0 0; color: var(--muted); font-size: 15px; }
+    .help a { color: var(--pink-dark); font-weight: 700; white-space: nowrap; }
+    .help a:hover { text-decoration: underline; }
+
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @media (max-width: 560px) {
+      .logo { font-size: 16px; }
+      .main { padding: 32px 16px; }
+      .text { font-size: 16px; }
+      .actions .btn { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) { .code { animation: none; } }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <a class="logo" href="/" aria-label="{{ brand }}">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="3" y="3" width="58" height="58" rx="18" fill="none" stroke="currentColor" stroke-width="5"/><path d="M42 23.500c-2.500-4-6.500-6-11-6-6 0-11 3.500-11 9 0 12.500 24 7 24 19.500 0 5.500-5.500 9-11.500 9-5.500 0-10-2.500-13-7" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><path d="M49 10c.6 3.400 1.600 4.400 5 5-3.400.6-4.400 1.600-5 5-.6-3.400-1.600-4.400-5-5 3.400-.6 4.400-1.600 5-5z" fill="currentColor"/></svg>
+      <span>{{ brand }}</span>
+    </a>
+  </header>
+
+  <main class="main">
+    <div class="card">
+      <p class="code">{{ code }}</p>
+      <h1>{{ title }}</h1>
+      <p class="text">{{ text }}</p>
+      <div class="actions">
+        {% if retry %}
+        <button class="btn btn--primary" type="button" onclick="location.reload()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.300 6.700M20 5v6h-6"/></svg>{{ labels.retry }}
+        </button>
+        <a class="btn btn--outline" href="{{ home_url }}">{{ home_label }}</a>
+        {% else %}
+        <a class="btn btn--primary" href="{{ home_url }}">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3.500 11 8.500-7 8.500 7M6 9.500V20h12V9.500M10 20v-5.500h4V20"/></svg>{{ home_label }}
+        </a>
+        <button class="btn btn--outline" type="button" onclick="history.back()">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12H5m6-6-6 6 6 6"/></svg>{{ labels.back }}
+        </button>
+        {% endif %}
+      </div>
+      {% if phone %}<p class="help">{{ labels.help }} <a href="tel:+{{ phone }}">{{ phone_text }}</a></p>{% endif %}
+    </div>
+  </main>
+</body>
+</html>

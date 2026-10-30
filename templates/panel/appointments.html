@@ -1,0 +1,24 @@
+{% extends "panel/base.html" %}
+{% load clinic_tags %}
+{% block title %}Navbatlar{% endblock %}
+{% block content %}
+<div class="head"><h1>Navbatlar</h1></div>
+<form class="filterbar" method="get">
+  <input type="search" name="q" value="{{ q }}" placeholder="Mijoz, telefon, kod" aria-label="Qidiruv">
+  <select name="status" data-autosubmit aria-label="Holat">
+    <option value="">Barcha holatlar</option>
+    {% for value, label in statuses %}<option value="{{ value }}" {% if value == status %}selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select>
+  {% if is_main %}<select name="doctor" data-autosubmit aria-label="Mutaxassis">
+    <option value="">Barcha mutaxassislar</option>
+    {% for d in doctors %}<option value="{{ d.id }}" {% if d.id|stringformat:'d' == doctor %}selected{% endif %}>{{ d.name_uz }}</option>{% endfor %}
+  </select>{% endif %}
+  <input type="date" name="from" value="{{ from }}" data-autosubmit aria-label="Boshlanish sanasi">
+  <input type="date" name="to" value="{{ to }}" data-autosubmit aria-label="Tugash sanasi">
+  <button class="btn btn--outline" type="submit">Qidirish</button>
+</form>
+<section class="box">
+  {% include "panel/_table.html" with rows=page.object_list with_date=True %}
+  {% include "panel/_pager.html" %}
+</section>
+{% endblock %}

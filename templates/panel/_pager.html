@@ -1,0 +1,7 @@
+{% load clinic_tags %}{% if page.has_other_pages %}
+<nav class="pager" aria-label="Sahifalar">
+  {% if page.has_previous %}<a class="btn btn--outline btn--icon" href="?{% query_with page=page.previous_page_number %}" aria-label="Oldingi sahifa"><svg class="i i--sm"><use href="#i-left"/></svg></a>{% endif %}
+  <span class="muted">{{ page.number }} / {{ page.paginator.num_pages }}</span>
+  {% if page.has_next %}<a class="btn btn--outline btn--icon" href="?{% query_with page=page.next_page_number %}" aria-label="Keyingi sahifa"><svg class="i i--sm"><use href="#i-right"/></svg></a>{% endif %}
+</nav>
+{% endif %}

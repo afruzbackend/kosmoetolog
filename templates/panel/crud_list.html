@@ -1,0 +1,36 @@
+{% extends "panel/base.html" %}
+{% load clinic_tags %}
+{% block title %}{{ config.title }}{% endblock %}
+{% block content %}
+<div class="head">
+  <h1>{{ config.title }}</h1>
+  <div class="head__actions">
+    {% if slug == 'xizmatlar' %}<a class="btn btn--outline" href="{% url 'panel:crud' 'kategoriyalar' %}">Kategoriyalar</a>{% endif %}
+    <a class="btn btn--primary" href="{% url 'panel:crud_new' slug %}"><svg class="i i--sm"><use href="#i-plus"/></svg>Qo'shish</a>
+  </div>
+</div>
+<section class="box">
+  <div class="table-wrap"><table class="table">
+    <thead><tr>{% for h in headers %}<th>{{ h }}</th>{% endfor %}<th></th></tr></thead>
+    <tbody>
+    {% for row in rows %}
+      <tr>
+        {% for cell in row.cells %}
+        <td>
+          {% if cell.kind == 'image' %}<img class="thumb" src="{{ cell.value }}" alt="">
+          {% elif cell.kind == 'phone' %}<span class="nowrap">{{ cell.value|phone|default:"—" }}</span>
+          {% elif cell.kind == 'money' %}<span class="nowrap">{{ cell.value|money }}</span>
+          {% elif cell.kind == 'bool' %}{% if cell.value %}<span class="st st--done">Ha</span>{% else %}<span class="st st--noshow">Yo'q</span>{% endif %}
+          {% else %}{{ cell.value|default_if_none:"—"|truncatechars:60 }}{% endif %}
+        </td>
+        {% endfor %}
+        <td class="t-actions">
+          <a class="mini" href="{% url 'panel:crud_edit' slug row.pk %}" aria-label="Tahrirlash" title="Tahrirlash"><svg class="i i--sm"><use href="#i-edit"/></svg></a>
+          <form method="post" action="{% url 'panel:crud_delete' slug row.pk %}">{% csrf_token %}<button class="mini" data-confirm="O'chirilsinmi?" aria-label="O'chirish" title="O'chirish"><svg class="i i--sm"><use href="#i-trash"/></svg></button></form>
+        </td>
+      </tr>
+    {% empty %}<tr><td colspan="{{ headers|length|add:1 }}" class="t-empty">Hozircha bo'sh</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+</section>
+{% endblock %}

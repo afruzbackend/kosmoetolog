@@ -1,0 +1,154 @@
+{% extends "site/base.html" %}
+{% load clinic_tags %}
+{% block bodyclass %}has-hero{% endblock %}
+{% block content %}
+
+{% if banners %}
+<section class="hero" id="hero" aria-roledescription="carousel">
+  {% for b in banners %}
+  <div class="hero__slide{% if forloop.first %} is-active{% endif %}" style="background-image:url('{{ b.image_url }}')">
+    <div class="hero__scrim"></div>
+    <div class="wrap hero__inner">
+      <div class="hero__copy">
+        {% if b.badge %}<span class="hero__badge">{{ b.badge }}</span>{% endif %}
+        <h1>{{ b.title }}</h1>
+        {% if b.subtitle %}<p>{{ b.subtitle }}</p>{% endif %}
+        <a class="btn btn--dark" href="{{ b.link|default:'/navbat/' }}">{{ t.book_now }} <svg class="i i--sm"><use href="#i-right"/></svg></a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+  {% if banners|length > 1 %}
+  <button class="hero__arrow hero__arrow--prev" type="button" id="heroPrev" aria-label="{{ t.prev_slide }}"><svg class="i"><use href="#i-left"/></svg></button>
+  <button class="hero__arrow hero__arrow--next" type="button" id="heroNext" aria-label="{{ t.next_slide }}"><svg class="i"><use href="#i-right"/></svg></button>
+  <div class="hero__dots" role="tablist">
+    {% for b in banners %}<button type="button" class="{% if forloop.first %}is-active{% endif %}" aria-label="{{ forloop.counter }}"></button>{% endfor %}
+  </div>
+  {% endif %}
+</section>
+{% endif %}
+
+<section class="section wrap">
+  <div class="section__head">
+    <h2>{{ t.categories }}</h2>
+    <div class="arrows">
+      <button class="round" type="button" data-scroll="#catRow" data-dir="-1" aria-label="{{ t.back }}"><svg class="i"><use href="#i-left"/></svg></button>
+      <button class="round" type="button" data-scroll="#catRow" data-dir="1" aria-label="{{ t.next }}"><svg class="i"><use href="#i-right"/></svg></button>
+    </div>
+  </div>
+  <div class="cat-row" id="catRow">
+    {% for c in categories %}
+    <a class="cat" href="{% url 'catalog' %}?category={{ c.id }}">
+      <img class="cat__img" src="{{ c.image_url }}" alt="" loading="lazy">
+      <span class="cat__name">{{ c.name }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section wrap">
+  <div class="section__head">
+    <h2>{{ t.popular }}</h2>
+    <a class="link-more" href="{% url 'catalog' %}">{{ t.see_all }} <svg class="i i--sm"><use href="#i-right"/></svg></a>
+  </div>
+  <div class="grid">
+    {% for s in popular %}{% include "site/_service_card.html" %}{% endfor %}
+  </div>
+</section>
+
+{% if doctors %}{% with main=doctors.0 %}
+<section class="section wrap" id="about">
+  <div class="about">
+    <div class="about__photos">
+      <img class="about__main" src="{{ main.image_url }}" alt="{{ main.name }}" loading="lazy">
+      {% if main.photo2_url %}<img class="about__inset" src="{{ main.photo2_url }}" alt="" loading="lazy">{% endif %}
+    </div>
+    <div class="about__text">
+      <p class="about__label">{{ t.about_title }}</p>
+      <h2>{{ main.name }}</h2>
+      <p class="lead">{{ main.specialty }}</p>
+      <p>{{ main.bio|linebreaksbr }}</p>
+      <ul class="facts">
+        <li>{% icon "star" 22 %}{{ main.experience }} {{ t.exp_years }}</li>
+        <li>{% icon "specialist" 22 %}{{ t.about_f1 }}</li>
+        <li>{% icon "sparkle" 22 %}{{ t.about_f2 }}</li>
+        <li>{% icon "check" 22 %}{{ t.about_f3 }}</li>
+      </ul>
+      <div class="about__actions">
+        <a class="btn btn--primary" href="{% url 'booking' %}?doctor={{ main.id }}">{{ t.book_now }}</a>
+        {% if main.telegram or site.telegram %}<a class="btn btn--outline" href="https://t.me/{{ main.telegram|default:site.telegram }}" target="_blank" rel="noopener">{% brand "telegram" 20 %}{{ t.write_telegram }}</a>{% endif %}
+        {% if main.instagram or site.instagram %}<a class="btn btn--outline" href="https://instagram.com/{{ main.instagram|default:site.instagram }}" target="_blank" rel="noopener">{% brand "instagram" 20 %}Instagram</a>{% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endwith %}{% endif %}
+
+<section class="section wrap" id="how">
+  <div class="section__head"><h2>{{ t.how_title }}</h2></div>
+  <div class="steps">
+    <div class="step">{% icon "sparkle" 40 %}<h3>{{ t.how_1_t }}</h3><p>{{ t.how_1_d }}</p></div>
+    <div class="step">{% icon "calendar" 40 %}<h3>{{ t.how_2_t }}</h3><p>{{ t.how_2_d }}</p></div>
+    <div class="step">{% icon "sparkle" 40 %}<h3>{{ t.how_3_t }}</h3><p>{{ t.how_3_d }}</p></div>
+  </div>
+</section>
+
+{% if doctor_count > 1 %}
+<section class="section wrap" id="doctors">
+  <div class="section__head"><h2>{{ t.our_doctors }}</h2></div>
+  <div class="doctors">
+    {% for d in doctors %}
+    <article class="doctor">
+      <a href="{% url 'doctor' d.id %}" class="doctor__photo"><img src="{{ d.image_url }}" alt="{{ d.name }}" loading="lazy"></a>
+      <div class="doctor__body">
+        <a class="doctor__name" href="{% url 'doctor' d.id %}">{{ d.name }}</a>
+        <p class="muted">{{ d.specialty }}</p>
+        <p class="doctor__exp">{% icon "star" 16 %} {{ d.experience }} {{ t.exp_years }}</p>
+        {% include "site/_doctor_links.html" with doctor=d %}
+        <a class="btn btn--outline btn--block" href="{% url 'booking' %}?doctor={{ d.id }}">{{ t.book_now }}</a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if reviews %}
+<section class="section wrap" id="reviews">
+  <div class="section__head"><h2>{{ t.reviews_title }}</h2></div>
+  <div class="reviews">
+    {% for r in reviews %}
+    <blockquote class="review">
+      <div class="review__stars">{% for i in r.stars %}{% icon "star" 16 %}{% endfor %}</div>
+      <p>{{ r.text }}</p>
+      <cite>{{ r.author }}</cite>
+    </blockquote>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="section wrap" id="contacts">
+  <div class="section__head"><h2>{{ t.find_us }}</h2></div>
+  <div class="contacts">
+    <div class="contacts__info">
+      {% if site.address %}<div class="info-row">{% icon "pin" 28 %}<div><small>{{ t.address }}</small><b>{{ site.address }}</b></div></div>{% endif %}
+      {% if site.phone %}<div class="info-row">{% icon "phone" 28 %}<div><small>{{ t.phone }}</small><a href="tel:+{{ site.phone }}"><b>{{ site.phone|phone }}</b></a></div></div>{% endif %}
+      {% if doctors %}<div class="info-row">{% icon "clock" 28 %}<div><small>{{ t.work_time }}</small><b>{{ doctors.0.work_start|time:"H:i" }} – {{ doctors.0.work_end|time:"H:i" }}</b></div></div>{% endif %}
+      {% if site.telegram %}<div class="info-row">{% brand "telegram" 28 %}<div><small>Telegram</small><a href="https://t.me/{{ site.telegram }}" target="_blank" rel="noopener"><b>@{{ site.telegram }}</b></a></div></div>{% endif %}
+      {% if site.instagram %}<div class="info-row">{% brand "instagram" 28 %}<div><small>Instagram</small><a href="https://instagram.com/{{ site.instagram }}" target="_blank" rel="noopener"><b>@{{ site.instagram }}</b></a></div></div>{% endif %}
+      <div class="contacts__maps">
+        <a class="btn btn--primary btn--block" href="{{ site.google_maps_url }}" target="_blank" rel="noopener">{% icon "pin" 18 %}{{ t.open_google }}</a>
+        <a class="btn btn--outline btn--block" href="{{ site.yandex_maps_url }}" target="_blank" rel="noopener">{% icon "pin" 18 %}{{ t.open_yandex }}</a>
+      </div>
+    </div>
+    <div class="map">
+      <div class="map__tabs" role="tablist">
+        <button class="is-active" type="button" data-map="{{ site.google_embed_url }}">Google</button>
+        <button type="button" data-map="{{ site.yandex_embed_url }}">Yandex</button>
+      </div>
+      <iframe id="mapFrame" src="{{ site.google_embed_url }}" title="{{ t.find_us }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </div>
+</section>
+{% endblock %}

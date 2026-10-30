@@ -1,0 +1,8 @@
+<form class="actions" method="post" action="{% url 'panel:appointment_status' a.id %}">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+  {% if a.status == 'new' %}<button class="mini mini--ok" name="status" value="confirmed">Tasdiqlash</button>{% endif %}
+  {% if a.status == 'confirmed' %}<button class="mini mini--ok" name="status" value="done">Bajarildi</button>
+  <button class="mini" name="status" value="noshow">Kelmadi</button>{% endif %}
+  {% if a.status == 'new' or a.status == 'confirmed' %}<button class="mini" name="status" value="cancelled" data-confirm="Navbat bekor qilinsinmi?">Bekor</button>{% endif %}
+</form>

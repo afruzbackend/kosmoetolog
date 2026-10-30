@@ -1,0 +1,60 @@
+{% load static clinic_tags %}<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>{% block title %}Panel{% endblock %} | {{ site.name }}</title>
+  <link rel="icon" href="{% asset 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap&subset=cyrillic,latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="{% asset 'css/panel.css' %}">
+  <link rel="stylesheet" href="{% asset 'css/ui.css' %}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+{% include "site/_icons.html" %}
+<aside class="side" id="side">
+  <a class="side__logo" href="{% url 'panel:dashboard' %}">{% include "site/_logomark.html" %}<span>{{ site.name }}</span></a>
+  <nav>
+    <a href="{% url 'panel:dashboard' %}" class="{% if section == 'dashboard' %}is-active{% endif %}">{% icon "home" 20 %}Bugun</a>
+    <a href="{% url 'panel:calendar' %}" class="{% if section == 'calendar' %}is-active{% endif %}">{% icon "calendar" 20 %}Kalendar</a>
+    <a href="{% url 'panel:appointments' %}" class="{% if section == 'appointments' %}is-active{% endif %}">{% icon "list" 20 %}Navbatlar</a>
+    <a href="{% url 'panel:clients' %}" class="{% if section == 'clients' %}is-active{% endif %}">{% icon "users" 20 %}Mijozlar</a>
+    <a href="{% url 'panel:report' %}" class="{% if section == 'report' %}is-active{% endif %}">{% icon "chart" 20 %}Hisobot</a>
+    {% if is_main %}
+    <p class="side__label">Sayt</p>
+    <a href="{% url 'panel:crud' 'shifokorlar' %}" class="{% if section == 'doctors' %}is-active{% endif %}">{% icon "specialist" 20 %}Mutaxassislar</a>
+    <a href="{% url 'panel:crud' 'xizmatlar' %}" class="{% if section == 'services' %}is-active{% endif %}">{% icon "sparkle" 20 %}Xizmatlar</a>
+    <a href="{% url 'panel:crud' 'bannerlar' %}" class="{% if section == 'banners' %}is-active{% endif %}">{% icon "image" 20 %}Bannerlar</a>
+    <a href="{% url 'panel:crud' 'sharhlar' %}" class="{% if section == 'reviews' %}is-active{% endif %}">{% icon "comment" 20 %}Sharhlar</a>
+    <a href="{% url 'panel:crud' 'dam-olish' %}" class="{% if section == 'blocks' %}is-active{% endif %}">{% icon "moon" 20 %}Dam olish</a>
+    <a href="{% url 'panel:settings' %}" class="{% if section == 'settings' %}is-active{% endif %}">{% icon "gear" 20 %}Sozlamalar</a>
+    {% else %}
+    <a href="{% url 'panel:profile' %}" class="{% if section == 'profile' %}is-active{% endif %}">{% icon "user" 20 %}Mening profilim</a>
+    {% endif %}
+  </nav>
+  <div class="side__foot">
+    <a href="{% url 'home' %}" target="_blank" rel="noopener">{% icon "external" 18 %}Saytni ochish</a>
+    <form method="post" action="{% url 'panel:logout' %}">{% csrf_token %}<button type="submit">{% icon "logout" 18 %}Chiqish</button></form>
+  </div>
+</aside>
+<div class="main">
+  <header class="top">
+    <button class="burger" id="sideOpen" type="button" aria-label="Menyu"><svg class="i"><use href="#i-menu"/></svg></button>
+    <form class="top__search" action="{% url 'panel:appointments' %}" method="get" role="search">
+      <svg class="i i--sm"><use href="#i-search"/></svg>
+      <input name="q" type="search" placeholder="Mijoz, telefon yoki navbat kodi" aria-label="Qidiruv">
+    </form>
+    <a class="btn btn--primary" href="{% url 'panel:appointment_new' %}"><svg class="i i--sm"><use href="#i-plus"/></svg>Navbat</a>
+  </header>
+  {% for message in messages %}<div class="flash flash--{{ message.tags }}" role="status">{{ message }}</div>{% endfor %}
+  <div class="content">{% block content %}{% endblock %}</div>
+</div>
+<script src="{% asset 'js/masks.js' %}" defer></script>
+<script src="{% asset 'js/ui.js' %}" defer></script>
+<script src="{% asset 'js/panel.js' %}" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

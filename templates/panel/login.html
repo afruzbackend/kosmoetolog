@@ -1,0 +1,25 @@
+{% load static clinic_tags %}<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Kirish | {{ site.name }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap&subset=cyrillic,latin-ext" rel="stylesheet">
+  <link rel="icon" href="{% asset 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="stylesheet" href="{% asset 'css/panel.css' %}">
+  <link rel="stylesheet" href="{% asset 'css/ui.css' %}">
+</head>
+<body class="login">
+  <form class="login__card" method="post" novalidate>
+    {% csrf_token %}
+    <span class="login__mark">{% include "site/_logomark.html" %}</span>
+    <h1>{{ site.name }}</h1>
+    <p class="muted">Boshqaruv paneli</p>
+    {% if error %}<p class="flash flash--error">{{ error }}</p>{% endif %}
+    <label class="pf"><span>Login</span><input name="username" autocomplete="username" required autofocus></label>
+    <label class="pf"><span>Parol</span><input name="password" type="password" autocomplete="current-password" required></label>
+    <button class="btn btn--primary btn--block" type="submit">Kirish</button>
+  </form>
+</body>
+</html>

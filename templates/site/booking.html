@@ -1,0 +1,119 @@
+{% extends "site/base.html" %}
+{% load static clinic_tags %}
+{% block title %}{{ t.book_now }} | {{ site.name }}{% endblock %}
+{% block content %}
+<div class="wrap page">
+  <nav class="crumbs" aria-label="breadcrumb">
+    <a href="{% url 'home' %}">{{ t.home }}</a><span>/</span><span class="crumbs__now">{{ t.book_now }}</span>
+  </nav>
+  <h1>{{ t.book_now }}</h1>
+
+  <div class="booking" id="booking">
+    <div class="booking__main">
+      <ol class="stepper" id="stepper">
+        <li class="is-active"><span>1</span>{{ t.service }}</li>
+        <li><span>2</span>{{ t.doctor }}</li>
+        <li><span>3</span>{{ t.time }}</li>
+        <li><span>4</span>{{ t.step_info }}</li>
+      </ol>
+
+      <section class="pane" data-pane="1">
+        <h2>{{ t.step_service }}</h2>
+        <div class="pills" id="bookCats">
+          <button class="pill is-active" type="button" data-cat="">{{ t.all }}</button>
+          {% for c in categories %}<button class="pill" type="button" data-cat="{{ c.id }}">{{ c.name }}</button>{% endfor %}
+        </div>
+        <div class="pick-list" id="serviceList"></div>
+      </section>
+
+      <section class="pane" data-pane="2" hidden>
+        <h2>{{ t.step_doctor }}</h2>
+        <div class="pick-list" id="doctorList"></div>
+        <button class="btn btn--ghost" type="button" data-back>{{ t.back }}</button>
+      </section>
+
+      <section class="pane" data-pane="3" hidden>
+        <h2>{{ t.step_time }}</h2>
+        <div class="cal-wrap">
+          <div class="cal">
+            <div class="cal__head">
+              <button class="round" type="button" id="calPrev" aria-label="{{ t.back }}"><svg class="i"><use href="#i-left"/></svg></button>
+              <b id="calTitle"></b>
+              <button class="round" type="button" id="calNext" aria-label="{{ t.next }}"><svg class="i"><use href="#i-right"/></svg></button>
+            </div>
+            <div class="cal__grid cal__grid--head">
+              <span>{{ t.mon }}</span><span>{{ t.tue }}</span><span>{{ t.wed }}</span><span>{{ t.thu }}</span><span>{{ t.fri }}</span><span>{{ t.sat }}</span><span>{{ t.sun }}</span>
+            </div>
+            <div class="cal__grid" id="calDays"></div>
+            <div class="cal__legend">
+              <span><i class="dot dot--free"></i>{{ t.free }}</span>
+              <span><i class="dot dot--full"></i>{{ t.busy }}</span>
+              <span><i class="dot dot--off"></i>{{ t.day_off }}</span>
+            </div>
+          </div>
+          <div class="slots">
+            <h3 id="slotsTitle">{{ t.pick_date }}</h3>
+            <div class="slots__grid" id="slotGrid"></div>
+          </div>
+        </div>
+        <div class="pane__actions">
+          <button class="btn btn--ghost" type="button" data-back>{{ t.back }}</button>
+          <button class="btn btn--primary" type="button" id="timeNext" disabled>{{ t.next }}</button>
+        </div>
+      </section>
+
+      <section class="pane" data-pane="4" hidden>
+        <h2>{{ t.step_info }}</h2>
+        <form id="bookForm" class="form" novalidate>
+          <label class="field">
+            <span>{{ t.name }}</span>
+            <input name="name" data-mask="name" placeholder="{{ t.name_ph }}" autocomplete="name" required>
+          </label>
+          <label class="field">
+            <span>{{ t.phone }}</span>
+            <input name="phone" data-mask="phone" placeholder="+998 50 000 00 00" inputmode="tel" autocomplete="tel" required>
+          </label>
+          <label class="field">
+            <span>{{ t.note }}</span>
+            <textarea name="note" rows="3" maxlength="240" placeholder="{{ t.note_ph }}"></textarea>
+          </label>
+          <label class="hp" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
+          <p class="form__error" id="bookError" role="alert" hidden></p>
+          <div class="pane__actions">
+            <button class="btn btn--ghost" type="button" data-back>{{ t.back }}</button>
+            <button class="btn btn--primary" type="submit" id="bookSubmit">{{ t.confirm }}</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="pane pane--done" data-pane="5" hidden>
+        {% icon "check" 64 %}
+        <h2>{{ t.success }}</h2>
+        <p class="muted">{{ t.success_note }}</p>
+        <div class="code"><small>{{ t.booking_code }}</small><b id="doneCode"></b></div>
+        <div class="pane__actions pane__actions--center">
+          <a class="btn btn--outline" id="doneCalendar" target="_blank" rel="noopener">{% icon "calendar" 18 %}{{ t.add_calendar }}</a>
+          <a class="btn btn--primary" href="{% url 'booking' %}">{{ t.book_again }}</a>
+        </div>
+      </section>
+    </div>
+
+    <aside class="summary" id="summary">
+      <h3>{{ t.your_booking }}</h3>
+      <dl>
+        <div><dt>{{ t.service }}</dt><dd id="sumService">—</dd></div>
+        <div><dt>{{ t.doctor }}</dt><dd id="sumDoctor">—</dd></div>
+        <div><dt>{{ t.date }}</dt><dd id="sumDate">—</dd></div>
+        <div><dt>{{ t.time }}</dt><dd id="sumTime">—</dd></div>
+      </dl>
+      <div class="summary__total"><span>{{ t.price }}</span><b id="sumPrice">—</b></div>
+      <p class="muted summary__note">{% icon "clock" 16 %}{{ t.min_60 }}</p>
+    </aside>
+  </div>
+</div>
+{{ services_json|json_script:"servicesData" }}
+{{ preselect|json_script:"preselect" }}
+<input type="hidden" id="csrf" value="{{ csrf_token }}">
+<script id="siteInfo" type="application/json">{"name": "{{ site.name|escapejs }}", "address": "{{ site.address|escapejs }}"}</script>
+{% endblock %}
+{% block scripts %}<script src="{% asset 'js/booking.js' %}" defer></script>{% endblock %}

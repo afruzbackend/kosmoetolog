@@ -1,0 +1,124 @@
+{% load static clinic_tags %}<!doctype html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ site.name }}{% endblock %}</title>
+  <meta name="description" content="{% block description %}{{ site.tagline }}{% endblock %}">
+  <meta property="og:title" content="{{ site.name }}">
+  <meta property="og:description" content="{{ site.tagline }}">
+  <meta name="theme-color" content="#E0117F">
+  <link rel="icon" href="{% asset 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap&subset=cyrillic,latin-ext" rel="stylesheet">
+  <link rel="stylesheet" href="{% asset 'css/site.css' %}">
+  <link rel="stylesheet" href="{% asset 'css/ui.css' %}">
+</head>
+<body class="{% block bodyclass %}{% endblock %}">
+{% include "site/_icons.html" %}
+
+<header class="site-header" id="siteHeader">
+  <div class="site-header__top wrap">
+    <div class="site-header__left">
+      <button class="icon-btn menu-btn" id="menuOpen" type="button" aria-label="Menu"><svg class="i"><use href="#i-menu"/></svg></button>
+      <a class="address-link" href="{% url 'home' %}#contacts">{% icon "pin" 18 %}<span>{{ site.address|default:t.our_address|truncatechars:38 }}</span></a>
+    </div>
+    <a class="logo" href="{% url 'home' %}" aria-label="{{ site.name }}">{% include "site/_logo.html" %}</a>
+    <div class="site-header__right">
+      <button class="icon-btn" id="searchOpen" type="button" aria-label="{{ t.search }}"><svg class="i"><use href="#i-search"/></svg></button>
+      <div class="lang" id="langMenu">
+        <button class="lang__btn" type="button" aria-haspopup="true" aria-expanded="false">{% flag lang_flag 22 %}<span>{{ lang|upper }}</span><svg class="i i--sm"><use href="#i-chevron"/></svg></button>
+        <ul class="lang__list">
+          {% for code, label, flag_code in lang_options %}
+          <li><a href="{% url 'set_language' code %}?next={{ request.get_full_path|urlencode }}" {% if code == lang %}class="is-active"{% endif %}>{% flag flag_code 22 %}{{ label }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      <a class="icon-btn" href="{% url 'lookup' %}" aria-label="{{ t.my_booking }}" title="{{ t.my_booking }}"><svg class="i"><use href="#i-user"/></svg></a>
+      <a class="login-btn" href="{% url 'panel:dashboard' %}"><svg class="i i--sm" aria-hidden="true"><use href="#i-login"/></svg><span>{% if user.is_authenticated %}{{ t.panel }}{% else %}{{ t.login }}{% endif %}</span></a>
+    </div>
+  </div>
+  <nav class="site-nav" aria-label="Menu">
+    <a href="{% url 'catalog' %}">{{ t.nav_services }}</a>
+    <a href="{% url 'home' %}#about">{{ t.nav_about }}</a>
+    {% if doctor_count > 1 %}<a href="{% url 'home' %}#doctors">{{ t.nav_doctors }}</a>{% endif %}
+    <a href="{% url 'home' %}#how">{{ t.nav_how }}</a>
+    <a href="{% url 'home' %}#contacts">{{ t.nav_contacts }}</a>
+    <a class="site-nav__cta" href="{% url 'booking' %}">{{ t.book_now }}</a>
+  </nav>
+</header>
+
+<div class="drawer" id="drawer" hidden>
+  <div class="drawer__panel">
+    <button class="icon-btn drawer__close" id="menuClose" type="button" aria-label="Close"><svg class="i"><use href="#i-close"/></svg></button>
+    <a href="{% url 'catalog' %}">{{ t.nav_services }}</a>
+    <a href="{% url 'home' %}#about">{{ t.nav_about }}</a>
+    {% if doctor_count > 1 %}<a href="{% url 'home' %}#doctors">{{ t.nav_doctors }}</a>{% endif %}
+    <a href="{% url 'home' %}#how">{{ t.nav_how }}</a>
+    <a href="{% url 'home' %}#contacts">{{ t.nav_contacts }}</a>
+    <a href="{% url 'lookup' %}">{{ t.my_booking }}</a>
+    <a href="{% url 'panel:dashboard' %}">{% if user.is_authenticated %}{{ t.panel }}{% else %}{{ t.login }}{% endif %}</a>
+    <a class="btn btn--primary" href="{% url 'booking' %}">{{ t.book_now }}</a>
+  </div>
+</div>
+
+<div class="search" id="search" hidden role="dialog" aria-modal="true" aria-label="{{ t.search }}">
+  <div class="search__box wrap">
+    <form class="search__form" action="{% url 'catalog' %}" method="get" role="search">
+      <svg class="i"><use href="#i-search"/></svg>
+      <input id="searchInput" name="q" type="search" autocomplete="off" placeholder="{{ t.search_ph }}" aria-label="{{ t.search }}">
+      <button class="icon-btn" id="searchClose" type="button" aria-label="Close"><svg class="i"><use href="#i-close"/></svg></button>
+    </form>
+    <div class="search__results" id="searchResults" aria-live="polite"></div>
+    <div class="search__hints" id="searchHints">
+      <p class="muted">{{ t.search_popular }}</p>
+      <div class="pills">
+        <button class="pill" type="button" data-hint="Mezoterapiya">Mezoterapiya</button>
+        <button class="pill" type="button" data-hint="Hijoma">Hijoma</button>
+        <button class="pill" type="button" data-hint="Yuz chistkasi">Yuz chistkasi</button>
+        <button class="pill" type="button" data-hint="Piling">Piling</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>{% block content %}{% endblock %}</main>
+
+<footer class="site-footer">
+  <div class="wrap site-footer__grid">
+    <div>
+      <a class="logo logo--footer" href="{% url 'home' %}">{% include "site/_logo.html" %}</a>
+      <p class="muted">{{ site.tagline }}</p>
+    </div>
+    <div>
+      <h3>{{ t.nav_services }}</h3>
+      <a href="{% url 'catalog' %}">{{ t.all_services }}</a>
+      <a href="{% url 'booking' %}">{{ t.book_now }}</a>
+      <a href="{% url 'lookup' %}">{{ t.lookup_title }}</a>
+      <a href="{% url 'panel:dashboard' %}">{% if user.is_authenticated %}{{ t.panel }}{% else %}{{ t.login }}{% endif %}</a>
+    </div>
+    <div>
+      <h3>{{ t.nav_contacts }}</h3>
+      {% if site.phone %}<a class="foot-row" href="tel:+{{ site.phone }}">{% icon "phone" 20 %}{{ site.phone|phone }}</a>{% endif %}
+      {% if site.phone2 %}<a class="foot-row" href="tel:+{{ site.phone2 }}">{% icon "phone" 20 %}{{ site.phone2|phone }}</a>{% endif %}
+      {% if site.address %}<a class="foot-row" href="{{ site.google_maps_url }}" target="_blank" rel="noopener">{% icon "pin" 20 %}<span class="muted">{{ site.address }}</span></a>{% endif %}
+    </div>
+    <div>
+      <h3>{{ t.social }}</h3>
+      {% if site.telegram %}<a class="foot-row" href="https://t.me/{{ site.telegram }}" rel="noopener" target="_blank">{% brand "telegram" 22 %}Telegram</a>{% endif %}
+      {% if site.instagram %}<a class="foot-row" href="https://instagram.com/{{ site.instagram }}" rel="noopener" target="_blank">{% brand "instagram" 22 %}Instagram</a>{% endif %}
+    </div>
+  </div>
+  <div class="wrap site-footer__bottom"><span>© {% now "Y" %} {{ site.name }}. {{ t.footer_note }}</span></div>
+</footer>
+
+<a class="float-cta" href="{% url 'booking' %}">{% icon "calendar" 20 %}{{ t.book_now }}</a>
+
+{{ client_texts|json_script:"i18n" }}
+<script src="{% asset 'js/masks.js' %}" defer></script>
+<script src="{% asset 'js/ui.js' %}" defer></script>
+<script src="{% asset 'js/site.js' %}" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

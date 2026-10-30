@@ -1,0 +1,40 @@
+{% extends "panel/base.html" %}
+{% load clinic_tags %}
+{% block title %}Kalendar{% endblock %}
+{% block content %}
+<div class="head">
+  <div><h1>{{ day|date:"j F" }}{% if is_today %} <small class="muted">bugun</small>{% endif %}</h1><p class="muted">{{ day|date:"l" }}: {{ stats.total }} ta navbat</p></div>
+  <form class="daynav" method="get">
+    <a class="btn btn--outline btn--icon" href="?date={{ prev|date:'Y-m-d' }}" aria-label="Oldingi kun"><svg class="i i--sm"><use href="#i-left"/></svg></a>
+    <input type="date" name="date" value="{{ day|date:'Y-m-d' }}" required data-autosubmit aria-label="Sana">
+    <a class="btn btn--outline btn--icon" href="?date={{ next|date:'Y-m-d' }}" aria-label="Keyingi kun"><svg class="i i--sm"><use href="#i-right"/></svg></a>
+  </form>
+</div>
+<div class="table-wrap box box--flush">
+  <table class="sched">
+    <thead><tr><th></th>{% for d in doctors %}<th><img src="{{ d.image_url }}" alt=""><span>{{ d.name_uz }}<small>{{ d.specialty_uz|truncatechars:32 }}</small></span></th>{% endfor %}</tr></thead>
+    <tbody>
+      {% for row in rows %}
+      <tr>
+        <th>{{ row.hour|time:"H:i" }}</th>
+        {% for cell in row.cells %}
+        <td class="c c--{{ cell.state }}">
+          {% if cell.state == 'booked' %}
+          <a class="slot st--{{ cell.appointment.status }}" href="{% url 'panel:appointment' cell.appointment.id %}?next={{ request.get_full_path|urlencode }}">
+            <b>{{ cell.appointment.client.name }}</b>
+            <small>{{ cell.appointment.service.name_uz }}</small>
+            <small>{{ cell.appointment.get_status_display }}</small>
+          </a>
+          {% elif cell.state == 'free' %}
+          <a class="add" href="{% url 'panel:appointment_new' %}?doctor={{ cell.doctor.id }}&date={{ day|date:'Y-m-d' }}&time={{ row.hour|time:'H:i' }}" aria-label="Navbat qo'shish"><svg class="i"><use href="#i-plus"/></svg></a>
+          {% else %}<span class="off">—</span>{% endif %}
+        </td>
+        {% endfor %}
+      </tr>
+      {% empty %}
+      <tr><td class="t-empty" colspan="4">Faol mutaxassis yo'q</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

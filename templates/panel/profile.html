@@ -1,0 +1,19 @@
+{% extends "panel/base.html" %}
+{% block title %}Mening profilim{% endblock %}
+{% block content %}
+<div class="head"><h1>Mening profilim</h1></div>
+<form class="box formgrid" method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {% include "panel/_form_layout.html" %}
+  <div class="formbar"><button class="btn btn--primary" type="submit">Saqlash</button></div>
+</form>
+
+<form class="box formgrid" method="post" novalidate>
+  {% csrf_token %}
+  <input type="hidden" name="form" value="password">
+  <h2 class="pf--wide">Parolni almashtirish</h2>
+  {% for field in password_form %}<label class="pf"><span>{{ field.label }}</span>{{ field }}{{ field.errors }}</label>{% endfor %}
+  <div class="formbar"><button class="btn btn--outline" type="submit">Parolni yangilash</button></div>
+</form>
+{% endblock %}

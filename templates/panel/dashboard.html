@@ -1,0 +1,25 @@
+{% extends "panel/base.html" %}
+{% load clinic_tags %}
+{% block title %}Bugun{% endblock %}
+{% block content %}
+<div class="head">
+  <div><h1>{{ today|date:"j F" }}</h1><p class="muted">{{ today|date:"l" }}</p></div>
+  <a class="btn btn--outline" href="{% url 'panel:report' %}">Bugungi hisobot</a>
+</div>
+<div class="stats">
+  <div class="stat"><small>Navbatlar</small><b>{{ stats.total }}</b></div>
+  <div class="stat"><small>Bajarildi</small><b>{{ stats.done }}</b></div>
+  <div class="stat"><small>Kutilmoqda</small><b>{{ stats.waiting }}</b></div>
+  <div class="stat"><small>Tushum, so'm</small><b>{{ stats.revenue|money }}</b></div>
+</div>
+{% if new_requests %}
+<section class="box">
+  <h2>{% icon "sparkle" 20 %} Yangi so'rovlar</h2>
+  {% include "panel/_table.html" with rows=new_requests with_date=True %}
+</section>
+{% endif %}
+<section class="box">
+  <h2>Bugungi navbatlar</h2>
+  {% include "panel/_table.html" with rows=todays %}
+</section>
+{% endblock %}

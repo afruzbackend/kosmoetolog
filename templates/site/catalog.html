@@ -1,0 +1,76 @@
+{% extends "site/base.html" %}
+{% load clinic_tags %}
+{% block title %}{{ t.all_services }} | {{ site.name }}{% endblock %}
+{% block content %}
+<div class="wrap page">
+  <nav class="crumbs" aria-label="breadcrumb">
+    <a href="{% url 'home' %}">{{ t.home }}</a><span>/</span><span class="crumbs__now">{{ t.all_services }}</span>
+  </nav>
+  <div class="page__head">
+    <h1>{% if q %}{{ t.results_for }}: «{{ q }}»{% else %}{{ t.all_services }}{% endif %}</h1>
+    <form class="sort" method="get" id="sortForm">
+      <span class="muted">{{ services|length }} {{ t.services_count }}</span>
+      {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+      {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+      {% if selected_doctor %}<input type="hidden" name="doctor" value="{{ selected_doctor }}">{% endif %}
+      {% if min_value != "" %}<input type="hidden" name="min" value="{{ min_value }}">{% endif %}
+      {% if max_value != "" %}<input type="hidden" name="max" value="{{ max_value }}">{% endif %}
+      <select name="sort" aria-label="Sort" data-autosubmit data-plain>
+        {% for value, label in sort_options %}<option value="{{ value }}" {% if value == sort %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+    </form>
+  </div>
+
+  <div class="catalog">
+    <aside class="filters">
+      <div class="pills">
+        <a class="pill{% if not selected_category %} is-active{% endif %}" href="?{% query_with category='' %}">{{ t.all }}</a>
+        {% for c in categories %}
+        <a class="pill{% if selected_category == c.id|stringformat:'d' %} is-active{% endif %}" href="?{% query_with category=c.id %}">{{ c.name }}</a>
+        {% endfor %}
+      </div>
+
+      <button class="filters__toggle btn btn--outline btn--block" type="button" id="filtersToggle">{{ t.filters }}</button>
+      <form class="filters__form" id="filtersForm" method="get">
+        <h2>{{ t.filters }}</h2>
+        {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+        {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+        <input type="hidden" name="sort" value="{{ sort }}">
+        <details class="acc" open>
+          <summary>{{ t.price_sum }}<svg class="i i--sm"><use href="#i-chevron"/></svg></summary>
+          <div class="range">
+            <input name="min" data-mask="money" inputmode="numeric" value="{{ min_value }}" placeholder="{{ price_low|money }}" aria-label="Min">
+            <input name="max" data-mask="money" inputmode="numeric" value="{{ max_value }}" placeholder="{{ price_high|money }}" aria-label="Max">
+          </div>
+        </details>
+        <details class="acc" {% if selected_doctor %}open{% endif %}>
+          <summary>{{ t.doctor }}<svg class="i i--sm"><use href="#i-chevron"/></svg></summary>
+          <label class="radio"><input type="radio" name="doctor" value="" {% if not selected_doctor %}checked{% endif %}><span>{{ t.all }}</span></label>
+          {% for d in doctors %}
+          <label class="radio"><input type="radio" name="doctor" value="{{ d.id }}" {% if selected_doctor == d.id|stringformat:'d' %}checked{% endif %}><span>{{ d.name }}</span></label>
+          {% endfor %}
+        </details>
+        <div class="filters__actions">
+          <button class="btn btn--primary btn--block" type="submit">{{ t.apply }}</button>
+          <a class="btn btn--ghost btn--block" href="{% url 'catalog' %}">{{ t.reset }}</a>
+        </div>
+      </form>
+    </aside>
+
+    <div>
+      {% if services %}
+      <div class="grid grid--3">
+        {% for s in services %}{% include "site/_service_card.html" %}{% endfor %}
+      </div>
+      {% else %}
+      <div class="empty">
+        {% icon "sparkle" 56 %}
+        <h3>{{ t.search_empty }}</h3>
+        <p class="muted">{{ t.search_try }}</p>
+        <a class="btn btn--outline" href="{% url 'catalog' %}">{{ t.all_services }}</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "panel/base.html" %}
+{% block title %}{{ config.one }}{% endblock %}
+{% block content %}
+<div class="head"><h1>{% if instance %}{{ instance }}{% else %}Yangi: {{ config.one|lower }}{% endif %}</h1></div>
+<form class="box formgrid" method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+  {% include "panel/_form_layout.html" %}
+  <div class="formbar">
+    <button class="btn btn--primary" type="submit">Saqlash</button>
+    <a class="btn btn--ghost" href="{% url 'panel:crud' slug %}">Bekor qilish</a>
+  </div>
+</form>
+{% endblock %}

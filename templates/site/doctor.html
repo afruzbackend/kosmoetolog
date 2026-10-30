@@ -1,0 +1,32 @@
+{% extends "site/base.html" %}
+{% load clinic_tags %}
+{% block title %}{{ doctor.name }} | {{ site.name }}{% endblock %}
+{% block content %}
+<div class="wrap page">
+  <nav class="crumbs" aria-label="breadcrumb">
+    <a href="{% url 'home' %}">{{ t.home }}</a><span>/</span>
+    <a href="{% url 'home' %}#doctors">{{ t.nav_doctors }}</a><span>/</span>
+    <span class="crumbs__now">{{ doctor.name }}</span>
+  </nav>
+  <div class="detail">
+    <div class="detail__media detail__media--photo"><img src="{{ doctor.image_url }}" alt="{{ doctor.name }}">{% if doctor.photo2_url %}<img class="detail__inset" src="{{ doctor.photo2_url }}" alt="">{% endif %}</div>
+    <div class="detail__info">
+      <h1>{{ doctor.name }}</h1>
+      <p class="lead">{{ doctor.specialty }}</p>
+      <div class="detail__meta">
+        <span>{% icon "star" 20 %}{{ doctor.experience }} {{ t.exp_years }}</span>
+        {% if free %}<span>{% icon "calendar" 20 %}{{ t.next_free }}: {{ free.date|dotted }}, {{ free.time }}</span>{% endif %}
+      </div>
+      {% if doctor.bio %}<p>{{ doctor.bio|linebreaksbr }}</p>{% endif %}
+      {% include "site/_doctor_links.html" %}
+      <a class="btn btn--primary btn--lg" href="{% url 'booking' %}?doctor={{ doctor.id }}">{{ t.book_now }}</a>
+    </div>
+  </div>
+  {% if services %}
+  <section class="section">
+    <div class="section__head"><h2>{{ t.nav_services }}</h2></div>
+    <div class="grid">{% for s in services %}{% include "site/_service_card.html" %}{% endfor %}</div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

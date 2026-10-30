@@ -1,0 +1,27 @@
+{% extends "panel/base.html" %}
+{% load clinic_tags %}
+{% block title %}Mijozlar{% endblock %}
+{% block content %}
+<div class="head"><h1>Mijozlar</h1></div>
+<form class="filterbar" method="get">
+  <input type="search" name="q" value="{{ q }}" placeholder="Ism yoki telefon" aria-label="Qidiruv">
+  <button class="btn btn--outline" type="submit">Qidirish</button>
+</form>
+<section class="box">
+  <div class="table-wrap"><table class="table">
+    <thead><tr><th>Mijoz</th><th>Telefon</th><th>Tashriflar</th><th>Jami, so'm</th><th>Oxirgi navbat</th></tr></thead>
+    <tbody>
+    {% for c in page.object_list %}
+      <tr>
+        <td><a class="t-link" href="{% url 'panel:client' c.id %}">{{ c.name }}</a></td>
+        <td class="nowrap"><a href="tel:+{{ c.phone }}">{{ c.phone|phone }}</a></td>
+        <td>{{ c.visits }}</td>
+        <td class="nowrap">{{ c.spent|default:0|money }}</td>
+        <td class="nowrap">{{ c.last|date:"d.m.Y"|default:"—" }}</td>
+      </tr>
+    {% empty %}<tr><td colspan="5" class="t-empty">Mijoz topilmadi</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+  {% include "panel/_pager.html" %}
+</section>
+{% endblock %}
